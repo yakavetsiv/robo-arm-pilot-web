@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -207,12 +208,12 @@ export function PositionLibrary() {
                 <div className="space-y-2">
                   <Label>Cartesian Position (mm)</Label>
                   <div className="grid grid-cols-3 gap-2">
-                    {['x', 'y', 'z'].map(axis => (
+                    {(['x', 'y', 'z'] as const).map(axis => (
                       <Input
                         key={axis}
                         type="number"
                         placeholder={axis.toUpperCase()}
-                        value={editingPosition?.[axis as keyof Position] || newPosition[axis as keyof typeof newPosition]}
+                        value={editingPosition ? editingPosition[axis].toString() : newPosition[axis].toString()}
                         onChange={(e) => {
                           const value = parseFloat(e.target.value) || 0;
                           editingPosition 
@@ -227,12 +228,12 @@ export function PositionLibrary() {
                 <div className="space-y-2">
                   <Label>Rotation (degrees)</Label>
                   <div className="grid grid-cols-3 gap-2">
-                    {['rx', 'ry', 'rz'].map(axis => (
+                    {(['rx', 'ry', 'rz'] as const).map(axis => (
                       <Input
                         key={axis}
                         type="number"
                         placeholder={axis.toUpperCase()}
-                        value={editingPosition?.[axis as keyof Position] || newPosition[axis as keyof typeof newPosition]}
+                        value={editingPosition ? editingPosition[axis].toString() : newPosition[axis].toString()}
                         onChange={(e) => {
                           const value = parseFloat(e.target.value) || 0;
                           editingPosition 

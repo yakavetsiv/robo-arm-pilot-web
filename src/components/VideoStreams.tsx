@@ -1,7 +1,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Video, VideoOff } from "lucide-react";
+import { Video, VideoOff, Navigation, Camera, Target, MapPin } from "lucide-react";
 import { RobotControlsSheet } from "./RobotControlsSheet";
 
 export function VideoStreams() {
@@ -45,6 +45,16 @@ export function VideoStreams() {
                   <p className="text-xs">1920x1080 @ 30fps</p>
                 </div>
               </div>
+              <div className="flex gap-2">
+                <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white flex-1">
+                  <Target size={14} className="mr-1" />
+                  Detect AprilTag
+                </Button>
+                <Button size="sm" variant="outline" className="border-blue-500 text-blue-600 hover:bg-blue-600 hover:text-white flex-1">
+                  <Navigation size={14} className="mr-1" />
+                  Navigate to Tag
+                </Button>
+              </div>
             </div>
             
             <div className="space-y-2">
@@ -61,6 +71,16 @@ export function VideoStreams() {
                   <p className="text-sm">Camera offline</p>
                   <p className="text-xs">1280x720 @ 15fps</p>
                 </div>
+              </div>
+              <div className="flex gap-2">
+                <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white flex-1">
+                  <Target size={14} className="mr-1" />
+                  Detect AprilTag
+                </Button>
+                <Button size="sm" variant="outline" className="border-blue-500 text-blue-600 hover:bg-blue-600 hover:text-white flex-1">
+                  <MapPin size={14} className="mr-1" />
+                  Set Position
+                </Button>
               </div>
             </div>
           </div>

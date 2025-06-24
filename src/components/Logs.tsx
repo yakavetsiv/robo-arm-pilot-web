@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -89,20 +88,20 @@ export function Logs() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-cyan-400">System Logs</h2>
+        <h2 className="text-2xl font-bold text-gray-800">System Logs</h2>
         <div className="flex gap-2">
-          <Button variant="outline" className="border-red-500 text-red-400 hover:bg-red-600 hover:text-white">
+          <Button variant="outline" className="border-red-500 text-red-600 hover:bg-red-600 hover:text-white">
             <Trash size={16} className="mr-2" />
             Clear Logs
           </Button>
-          <Button variant="outline" className="border-cyan-500 text-cyan-400 hover:bg-cyan-600 hover:text-white">
+          <Button variant="outline" className="border-blue-500 text-blue-600 hover:bg-blue-600 hover:text-white">
             <FileText size={16} className="mr-2" />
             Export
           </Button>
         </div>
       </div>
 
-      <Card className="bg-slate-800 border-slate-700">
+      <Card className="bg-white border-gray-300 shadow-sm">
         <CardHeader>
           <div className="flex gap-4">
             <div className="flex-1">
@@ -110,14 +109,14 @@ export function Logs() {
                 placeholder="Search logs..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="bg-slate-700 border-slate-600 text-white"
+                className="bg-gray-50 border-gray-300"
               />
             </div>
             <Select value={filter} onValueChange={setFilter}>
-              <SelectTrigger className="w-40 bg-slate-700 border-slate-600">
+              <SelectTrigger className="w-40 bg-gray-50 border-gray-300">
                 <SelectValue placeholder="Filter by level" />
               </SelectTrigger>
-              <SelectContent className="bg-slate-700 border-slate-600">
+              <SelectContent className="bg-white border-gray-300">
                 <SelectItem value="all">All Levels</SelectItem>
                 <SelectItem value="info">Info</SelectItem>
                 <SelectItem value="warning">Warning</SelectItem>
@@ -129,16 +128,16 @@ export function Logs() {
         <CardContent>
           <div className="space-y-2 max-h-96 overflow-auto">
             {filteredLogs.map((log) => (
-              <div key={log.id} className="flex items-start gap-4 p-3 bg-slate-700 rounded-lg border border-slate-600">
+              <div key={log.id} className="flex items-start gap-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
                 <Badge className={getLevelColor(log.level)}>
                   {log.level.toUpperCase()}
                 </Badge>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-sm font-mono text-slate-400">{log.timestamp}</span>
-                    <span className="text-sm text-cyan-400">[{log.source}]</span>
+                    <span className="text-sm font-mono text-gray-600">{log.timestamp}</span>
+                    <span className="text-sm text-blue-600">[{log.source}]</span>
                   </div>
-                  <p className="text-sm text-slate-200">{log.message}</p>
+                  <p className="text-sm text-gray-800">{log.message}</p>
                 </div>
               </div>
             ))}

@@ -266,7 +266,8 @@ export function PositionLibrary() {
                         value={joint.toString()}
                         onChange={(e) => {
                           const value = parseFloat(e.target.value) || 0;
-                          const newJoints = [...(editingPosition?.joints || newPosition.joints)];
+                          const currentJoints = editingPosition?.joints || newPosition.joints;
+                          const newJoints = [...currentJoints];
                           newJoints[index] = value;
                           editingPosition 
                             ? setEditingPosition({...editingPosition, joints: newJoints})

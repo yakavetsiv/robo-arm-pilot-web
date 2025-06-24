@@ -1,7 +1,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Cube, Crosshair, Gauge } from "lucide-react";
+import { Box, Crosshair, Gauge } from "lucide-react";
 
 export function Status() {
   return (
@@ -12,14 +12,14 @@ export function Status() {
         <Card className="bg-white border-gray-300 shadow-sm">
           <CardHeader>
             <CardTitle className="text-gray-800 flex items-center gap-2">
-              <Cube size={20} />
+              <Box size={20} />
               3D Robot Visualization
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center border border-gray-300">
               <div className="text-center text-gray-500">
-                <Cube size={64} className="mx-auto mb-4" />
+                <Box size={64} className="mx-auto mb-4" />
                 <p className="text-lg">3D Robot Model</p>
                 <p className="text-sm">Interactive visualization will appear here</p>
                 <p className="text-xs mt-2">Current pose: [15.2°, -67.8°, 102.3°, -12.1°, 89.7°, 34.5°]</p>

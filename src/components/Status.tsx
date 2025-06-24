@@ -1,119 +1,182 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Box, Crosshair, Gauge } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Box, Crosshair, Gauge, Activity, Zap } from "lucide-react";
+import { Robot2DVisualization } from "./Robot2DVisualization";
 
 export function Status() {
+  const currentPosition = {
+    cartesian: { x: 456.78, y: 123.45, z: 789.01, rx: 12.34, ry: -45.67, rz: 78.90 },
+    joints: [15.2, -67.8, 102.3, -12.1, 89.7, 34.5]
+  };
+
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-gray-800">Robot Status</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-3xl font-bold text-gray-900">Robot Status</h2>
+        <div className="flex gap-2">
+          <Badge className="bg-green-100 text-green-800 border-green-200">Connected</Badge>
+          <Badge className="bg-blue-100 text-blue-800 border-blue-200">Idle</Badge>
+        </div>
+      </div>
+      
+      {/* 2D Robot Visualization */}
+      <Robot2DVisualization joints={currentPosition.joints} robotType="6-axis" />
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="bg-white border-gray-300 shadow-sm">
+        <Card className="bg-white border-gray-200 shadow-sm">
           <CardHeader>
-            <CardTitle className="text-gray-800 flex items-center gap-2">
-              <Box size={20} />
-              3D Robot Visualization
+            <CardTitle className="text-gray-900 flex items-center gap-2">
+              <Crosshair size={20} className="text-blue-600" />
+              Current Position
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center border border-gray-300">
-              <div className="text-center text-gray-500">
-                <Box size={64} className="mx-auto mb-4" />
-                <p className="text-lg">3D Robot Model</p>
-                <p className="text-sm">Interactive visualization will appear here</p>
-                <p className="text-xs mt-2">Current pose: [15.2°, -67.8°, 102.3°, -12.1°, 89.7°, 34.5°]</p>
+            <div className="grid grid-cols-2 gap-6">
+              <div>
+                <h4 className="font-semibold text-gray-700 mb-3 text-sm uppercase tracking-wide">Cartesian (mm)</h4>
+                <div className="space-y-2">
+                  {[
+                    { label: 'X', value: currentPosition.cartesian.x, color: 'text-red-600' },
+                    { label: 'Y', value: currentPosition.cartesian.y, color: 'text-green-600' },
+                    { label: 'Z', value: currentPosition.cartesian.z, color: 'text-blue-600' }
+                  ].map(({ label, value, color }) => (
+                    <div key={label} className="flex justify-between items-center p-2 bg-gray-50 rounded">
+                      <span className={`font-medium ${color}`}>{label}</span>
+                      <span className="font-mono text-sm text-gray-900">{value.toFixed(2)}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <h4 className="font-semibold text-gray-700 mb-3 text-sm uppercase tracking-wide">Rotation (°)</h4>
+                <div className="space-y-2">
+                  {[
+                    { label: 'RX', value: currentPosition.cartesian.rx, color: 'text-red-600' },
+                    { label: 'RY', value: currentPosition.cartesian.ry, color: 'text-green-600' },
+                    { label: 'RZ', value: currentPosition.cartesian.rz, color: 'text-blue-600' }
+                  ].map(({ label, value, color }) => (
+                    <div key={label} className="flex justify-between items-center p-2 bg-gray-50 rounded">
+                      <span className={`font-medium ${color}`}>{label}</span>
+                      <span className="font-mono text-sm text-gray-900">{value.toFixed(2)}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <div className="space-y-6">
-          <Card className="bg-white border-gray-300 shadow-sm">
-            <CardHeader>
-              <CardTitle className="text-gray-800 flex items-center gap-2">
-                <Crosshair size={20} />
-                Current Position
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <h4 className="font-medium text-gray-700 mb-2">Cartesian (mm)</h4>
-                  <div className="space-y-1 font-mono text-sm text-gray-800">
-                    <div>X: 456.78</div>
-                    <div>Y: 123.45</div>
-                    <div>Z: 789.01</div>
+        <Card className="bg-white border-gray-200 shadow-sm">
+          <CardHeader>
+            <CardTitle className="text-gray-900 flex items-center gap-2">
+              <Gauge size={20} className="text-purple-600" />
+              Joint Positions
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-3">
+              {currentPosition.joints.map((joint, index) => (
+                <div key={index} className="p-3 bg-gray-50 rounded-lg">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-sm font-semibold text-gray-700">J{index + 1}</span>
+                    <span className="text-xs font-mono text-gray-900 bg-white px-2 py-1 rounded">
+                      {joint.toFixed(1)}°
+                    </span>
+                  </div>
+                  <div className="w-full h-2 bg-gray-200 rounded-full">
+                    <div 
+                      className={`h-2 rounded-full transition-all duration-300 ${
+                        Math.abs(joint) > 90 ? 'bg-orange-500' : 'bg-blue-500'
+                      }`}
+                      style={{
+                        width: `${Math.min(Math.abs(joint) / 180 * 100, 100)}%`
+                      }}
+                    ></div>
                   </div>
                 </div>
-                <div>
-                  <h4 className="font-medium text-gray-700 mb-2">Rotation (°)</h4>
-                  <div className="space-y-1 font-mono text-sm text-gray-800">
-                    <div>RX: 12.34</div>
-                    <div>RY: -45.67</div>
-                    <div>RZ: 78.90</div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card className="bg-white border-gray-200 shadow-sm">
+          <CardHeader>
+            <CardTitle className="text-gray-900 flex items-center gap-2">
+              <Activity size={20} className="text-green-600" />
+              Robot State
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex flex-wrap gap-2">
+                <Badge className="bg-green-100 text-green-800 border-green-200">Connected</Badge>
+                <Badge className="bg-blue-100 text-blue-800 border-blue-200">Idle</Badge>
+                <Badge className="bg-orange-100 text-orange-800 border-orange-200">Manual Mode</Badge>
+                <Badge className="bg-gray-100 text-gray-800 border-gray-200">Safety OK</Badge>
+              </div>
+              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-200">
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Speed:</span>
+                    <span className="font-medium text-gray-900">50% (25 mm/s)</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Acceleration:</span>
+                    <span className="font-medium text-gray-900">100 mm/s²</span>
+                  </div>
+                </div>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">TCP Load:</span>
+                    <span className="font-medium text-gray-900">2.5 kg</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Last Move:</span>
+                    <span className="font-medium text-gray-900">2 min ago</span>
                   </div>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </CardContent>
+        </Card>
 
-          <Card className="bg-white border-gray-300 shadow-sm">
-            <CardHeader>
-              <CardTitle className="text-gray-800 flex items-center gap-2">
-                <Gauge size={20} />
-                Joint Positions
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-2">
-                {[
-                  { name: "J1", value: 15.2, limit: 180 },
-                  { name: "J2", value: -67.8, limit: 180 },
-                  { name: "J3", value: 102.3, limit: 180 },
-                  { name: "J4", value: -12.1, limit: 180 },
-                  { name: "J5", value: 89.7, limit: 180 },
-                  { name: "J6", value: 34.5, limit: 180 }
-                ].map((joint) => (
-                  <div key={joint.name} className="p-2 bg-gray-50 rounded">
-                    <div className="flex justify-between items-center mb-1">
-                      <span className="text-sm font-medium text-gray-700">{joint.name}</span>
-                      <span className="text-xs font-mono text-gray-800">{joint.value}°</span>
-                    </div>
-                    <div className="w-full h-2 bg-gray-200 rounded">
+        <Card className="bg-white border-gray-200 shadow-sm">
+          <CardHeader>
+            <CardTitle className="text-gray-900 flex items-center gap-2">
+              <Zap size={20} className="text-yellow-600" />
+              Performance Metrics
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {[
+                { label: 'Position Accuracy', value: 95, unit: '%', color: 'bg-green-500' },
+                { label: 'Movement Speed', value: 75, unit: '%', color: 'bg-blue-500' },
+                { label: 'Joint Health', value: 88, unit: '%', color: 'bg-green-500' },
+                { label: 'System Load', value: 45, unit: '%', color: 'bg-yellow-500' }
+              ].map((metric, index) => (
+                <div key={index} className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-gray-700">{metric.label}</span>
+                  <div className="flex items-center gap-3">
+                    <div className="w-20 h-2 bg-gray-200 rounded-full">
                       <div 
-                        className="h-2 bg-blue-500 rounded"
-                        style={{
-                          width: `${Math.abs(joint.value) / joint.limit * 100}%`
-                        }}
+                        className={`h-2 ${metric.color} rounded-full transition-all duration-300`}
+                        style={{ width: `${metric.value}%` }}
                       ></div>
                     </div>
+                    <span className="text-xs font-mono text-gray-900 bg-gray-100 px-2 py-1 rounded min-w-[3rem] text-center">
+                      {metric.value}{metric.unit}
+                    </span>
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-white border-gray-300 shadow-sm">
-            <CardHeader>
-              <CardTitle className="text-gray-800">Robot State</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-2">
-                <Badge className="bg-green-500 text-white">Connected</Badge>
-                <Badge className="bg-blue-500 text-white">Idle</Badge>
-                <Badge className="bg-orange-500 text-white">Manual Mode</Badge>
-                <Badge variant="outline" className="border-gray-300">Safety OK</Badge>
-              </div>
-              <div className="mt-4 space-y-2 text-sm text-gray-600">
-                <div>Speed: 50% (25 mm/s)</div>
-                <div>Acceleration: 100 mm/s²</div>
-                <div>TCP Load: 2.5 kg</div>
-                <div>Last Move: 2 minutes ago</div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

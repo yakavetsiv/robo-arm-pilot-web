@@ -1,0 +1,315 @@
+
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Plus, Edit, Trash, Camera } from "lucide-react";
+
+interface Position {
+  id: number;
+  name: string;
+  category: string;
+  x: number;
+  y: number;
+  z: number;
+  rx: number;
+  ry: number;
+  rz: number;
+  joints: number[];
+  created: string;
+}
+
+export function PositionLibrary() {
+  const [positions, setPositions] = useState<Position[]>([
+    {
+      id: 1,
+      name: "home_ultra",
+      category: "home",
+      x: 400, y: 0, z: 600,
+      rx: 0, ry: 0, rz: 0,
+      joints: [0, -90, 90, 0, 90, 0],
+      created: "2024-06-24 10:30"
+    },
+    {
+      id: 2,
+      name: "home_super",
+      category: "home",
+      x: 350, y: 50, z: 650,
+      rx: 0, ry: 0, rz: 0,
+      joints: [10, -85, 85, 0, 95, 10],
+      created: "2024-06-24 10:35"
+    },
+    {
+      id: 3,
+      name: "device1_approach",
+      category: "device1",
+      x: 200, y: 300, z: 400,
+      rx: 180, ry: 0, rz: 0,
+      joints: [45, -60, 120, 0, 60, 45],
+      created: "2024-06-24 11:15"
+    },
+    {
+      id: 4,
+      name: "device1_pick",
+      category: "device1",
+      x: 200, y: 300, z: 350,
+      rx: 180, ry: 0, rz: 0,
+      joints: [45, -65, 125, 0, 65, 45],
+      created: "2024-06-24 11:20"
+    }
+  ]);
+
+  const [editingPosition, setEditingPosition] = useState<Position | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [newPosition, setNewPosition] = useState({
+    name: "",
+    category: "",
+    x: 0, y: 0, z: 0,
+    rx: 0, ry: 0, rz: 0,
+    joints: [0, 0, 0, 0, 0, 0]
+  });
+
+  const getCategoryColor = (category: string) => {
+    switch (category) {
+      case "home": return "bg-green-500";
+      case "device1": return "bg-blue-500";
+      case "device2": return "bg-purple-500";
+      default: return "bg-gray-500";
+    }
+  };
+
+  const deletePosition = (id: number) => {
+    setPositions(positions.filter(p => p.id !== id));
+  };
+
+  const savePosition = () => {
+    if (editingPosition) {
+      setPositions(positions.map(p => p.id === editingPosition.id ? { ...editingPosition } : p));
+    } else {
+      const id = Math.max(...positions.map(p => p.id), 0) + 1;
+      setPositions([...positions, {
+        ...newPosition,
+        id,
+        created: new Date().toLocaleString()
+      }]);
+    }
+    setIsDialogOpen(false);
+    setEditingPosition(null);
+    setNewPosition({
+      name: "",
+      category: "",
+      x: 0, y: 0, z: 0,
+      rx: 0, ry: 0, rz: 0,
+      joints: [0, 0, 0, 0, 0, 0]
+    });
+  };
+
+  const getCurrentPosition = () => {
+    // Mock current robot position
+    setNewPosition({
+      ...newPosition,
+      x: 123.4, y: 567.8, z: 890.1,
+      rx: 12.3, ry: -45.6, rz: 78.9,
+      joints: [15.2, -67.8, 102.3, -12.1, 89.7, 34.5]
+    });
+  };
+
+  const findAprilTagPosition = () => {
+    // Mock April tag detection
+    setNewPosition({
+      ...newPosition,
+      x: 250.0, y: 180.0, z: 420.0,
+      rx: 0, ry: 0, rz: 90,
+      joints: [30.0, -45.0, 90.0, 0, 45.0, 30.0]
+    });
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-cyan-400">Position Library</h2>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button className="bg-green-600 hover:bg-green-700">
+              <Plus size={16} className="mr-2" />
+              Add Position
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-2xl bg-slate-800 border-slate-700 text-white">
+            <DialogHeader>
+              <DialogTitle className="text-cyan-400">
+                {editingPosition ? "Edit Position" : "Add New Position"}
+              </DialogTitle>
+            </DialogHeader>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-4">
+                <div>
+                  <Label>Position Name</Label>
+                  <Input
+                    value={editingPosition?.name || newPosition.name}
+                    onChange={(e) => editingPosition 
+                      ? setEditingPosition({...editingPosition, name: e.target.value})
+                      : setNewPosition({...newPosition, name: e.target.value})
+                    }
+                    className="bg-slate-700 border-slate-600"
+                    placeholder="e.g., device1_pick"
+                  />
+                </div>
+                <div>
+                  <Label>Category</Label>
+                  <Input
+                    value={editingPosition?.category || newPosition.category}
+                    onChange={(e) => editingPosition 
+                      ? setEditingPosition({...editingPosition, category: e.target.value})
+                      : setNewPosition({...newPosition, category: e.target.value})
+                    }
+                    className="bg-slate-700 border-slate-600"
+                    placeholder="e.g., device1, home"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Cartesian Position (mm)</Label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {['x', 'y', 'z'].map(axis => (
+                      <Input
+                        key={axis}
+                        type="number"
+                        placeholder={axis.toUpperCase()}
+                        value={editingPosition?.[axis as keyof Position] || newPosition[axis as keyof typeof newPosition]}
+                        onChange={(e) => {
+                          const value = parseFloat(e.target.value) || 0;
+                          editingPosition 
+                            ? setEditingPosition({...editingPosition, [axis]: value})
+                            : setNewPosition({...newPosition, [axis]: value});
+                        }}
+                        className="bg-slate-700 border-slate-600"
+                      />
+                    ))}
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>Rotation (degrees)</Label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {['rx', 'ry', 'rz'].map(axis => (
+                      <Input
+                        key={axis}
+                        type="number"
+                        placeholder={axis.toUpperCase()}
+                        value={editingPosition?.[axis as keyof Position] || newPosition[axis as keyof typeof newPosition]}
+                        onChange={(e) => {
+                          const value = parseFloat(e.target.value) || 0;
+                          editingPosition 
+                            ? setEditingPosition({...editingPosition, [axis]: value})
+                            : setNewPosition({...newPosition, [axis]: value});
+                        }}
+                        className="bg-slate-700 border-slate-600"
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div className="flex gap-2">
+                  <Button onClick={getCurrentPosition} size="sm" variant="outline" className="flex-1">
+                    Current Position
+                  </Button>
+                  <Button onClick={findAprilTagPosition} size="sm" variant="outline" className="flex-1">
+                    <Camera size={16} className="mr-1" />
+                    April Tag
+                  </Button>
+                </div>
+                <div className="space-y-2">
+                  <Label>Joint Angles (degrees)</Label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {(editingPosition?.joints || newPosition.joints).map((joint, index) => (
+                      <Input
+                        key={index}
+                        type="number"
+                        placeholder={`J${index + 1}`}
+                        value={joint}
+                        onChange={(e) => {
+                          const value = parseFloat(e.target.value) || 0;
+                          const newJoints = [...(editingPosition?.joints || newPosition.joints)];
+                          newJoints[index] = value;
+                          editingPosition 
+                            ? setEditingPosition({...editingPosition, joints: newJoints})
+                            : setNewPosition({...newPosition, joints: newJoints});
+                        }}
+                        className="bg-slate-700 border-slate-600"
+                      />
+                    ))}
+                  </div>
+                </div>
+                <Button onClick={savePosition} className="w-full bg-green-600 hover:bg-green-700">
+                  {editingPosition ? "Update Position" : "Save Position"}
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {positions.map((position) => (
+          <Card key={position.id} className="bg-slate-800 border-slate-700">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-cyan-400 text-lg">{position.name}</CardTitle>
+                <Badge className={getCategoryColor(position.category)}>
+                  {position.category}
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                <div>
+                  <span className="text-slate-400">Position:</span>
+                  <div className="font-mono text-xs">
+                    X: {position.x}<br/>
+                    Y: {position.y}<br/>
+                    Z: {position.z}
+                  </div>
+                </div>
+                <div>
+                  <span className="text-slate-400">Rotation:</span>
+                  <div className="font-mono text-xs">
+                    RX: {position.rx}<br/>
+                    RY: {position.ry}<br/>
+                    RZ: {position.rz}
+                  </div>
+                </div>
+              </div>
+              <div className="text-xs text-slate-400">
+                Created: {position.created}
+              </div>
+              <div className="flex gap-2">
+                <Button 
+                  size="sm" 
+                  onClick={() => {
+                    setEditingPosition(position);
+                    setIsDialogOpen(true);
+                  }}
+                  className="flex-1 bg-blue-600 hover:bg-blue-700"
+                >
+                  <Edit size={14} className="mr-1" />
+                  Edit
+                </Button>
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  onClick={() => deletePosition(position.id)}
+                  className="border-red-500 text-red-400 hover:bg-red-600 hover:text-white"
+                >
+                  <Trash size={14} />
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+}

@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Video, VideoOff, Navigation, Camera, Target, MapPin, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, RotateCw, RotateUcw, Move3D, Hand, Power, Play, Square } from "lucide-react";
+import { Video, VideoOff, Navigation, Camera, Target, MapPin, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, RotateCw, RotateCcw, Move3D, Hand, Power, Play, Square } from "lucide-react";
 import { RobotControlsSheet } from "./RobotControlsSheet";
 
 export function VideoStreams() {
@@ -297,7 +297,7 @@ export function VideoStreams() {
                   className="border-purple-500 text-purple-600 hover:bg-purple-600 hover:text-white"
                   onClick={() => handleCartesianChange('rz', String(cartesianPos.rz - 10))}
                 >
-                  <RotateUcw size={16} />
+                  <RotateCcw size={16} />
                 </Button>
                 <Button 
                   size="sm" 
